@@ -23,6 +23,9 @@ function FixAnimatedGifs
 	
 	$GameDatabase = $PlayniteApi.MainView.SelectedGames
 	Clear-Folder
+	$global:imgcount = 0
+	$gamecount = 0
+	$total = 0
 	
 	# Try to get magick.exe path via registry
     $Key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry64)
@@ -74,6 +77,7 @@ function FixAnimatedGifs
 	
 	foreach ($game in $GameDatabase){
 		$global:description = $game.Description
+		$global:gamebool = $false
 		$regex = '(https?:\/\/)(.[^"]*?)(gif|png)(.*?)(?=")'
 		$RegexMatches = ([regex]$regex).Matches($global:description)
 		$imgnum = 0
@@ -118,9 +122,14 @@ function FixAnimatedGifs
 			
 		}
 		$game.Description = $global:description
+		if ($global:gamebool -eq $true){
+			$gamecount += 1
+		}
+		$total += 1
 		$PlayniteApi.Database.Games.Update($game)
 	}
 	Clear-Folder
+	$PlayniteApi.Dialogs.ShowMessage("$total selected games have been inspected. `n$gamecount games were updated. `nModified a total of $imgcount images.", "Fix Animated Gifs")
 }
 
 function New-TemporaryDirectory {
@@ -163,7 +172,9 @@ function OpenWindow($match, $imgnum)
 	
 	# Set Xaml
     [xml]$Xaml = @"
-<Grid xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Margin="20">
+<Grid xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+		Margin="20">
 	<Grid.Resources>	
 		<Style TargetType="TextBlock" BasedOn="{StaticResource BaseTextBlockStyle}" />
 	</Grid.Resources>
@@ -174,6 +185,7 @@ function OpenWindow($match, $imgnum)
 			<RowDefinition Height="*"/>
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
+		
 		<ListBox Grid.Row="2" Name="ListBoxImages" Margin="0,20,0,0"
 				 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
 				 BorderThickness="0"
@@ -184,45 +196,57 @@ function OpenWindow($match, $imgnum)
 				</ItemsPanelTemplate>
 			</ListBox.ItemsPanel>
 			<ListBoxItem>
-				<Image Source="$image0" Width="300"/>
+				<Image Source="$image0" Width="{Binding ElementName=Slider, Path=Value}"/>
 			</ListBoxItem>
 			<ListBoxItem>
-				<Image Source="$image1" Width="300" />
+				<Image Source="$image1" Width="{Binding ElementName=Slider, Path=Value}" />
 			</ListBoxItem>
 			<ListBoxItem>
-				<Image Source="$image2" Width="300" />
+				<Image Source="$image2" Width="{Binding ElementName=Slider, Path=Value}" />
 			</ListBoxItem>
 			<ListBoxItem>
-				<Image Source="$image3" Width="300" />
+				<Image Source="$image3" Width="{Binding ElementName=Slider, Path=Value}" />
 			</ListBoxItem>
 			<ListBoxItem>
-				<Image Source="$image4" Width="300" />
+				<Image Source="$image4" Width="{Binding ElementName=Slider, Path=Value}" />
 			</ListBoxItem>
 			<ListBoxItem>
-				<Image Source="$image5" Width="300" />
+				<Image Source="$image5" Width="{Binding ElementName=Slider, Path=Value}" />
 			</ListBoxItem>
 			<ListBoxItem>
-				<Image Source="$image6" Width="300" />
+				<Image Source="$image6" Width="{Binding ElementName=Slider, Path=Value}" />
 			</ListBoxItem>
 			<ListBoxItem>
-				<Image Source="$image7" Width="300" />
+				<Image Source="$image7" Width="{Binding ElementName=Slider, Path=Value}" />
 			</ListBoxItem>
 			<ListBoxItem>
-				<Image Source="$image8" Width="300" />
+				<Image Source="$image8" Width="{Binding ElementName=Slider, Path=Value}" />
 			</ListBoxItem>
 			<ListBoxItem>
-				<Image Source="$image9" Width="300" />
+				<Image Source="$image9" Width="{Binding ElementName=Slider, Path=Value}" />
 			</ListBoxItem>
 			<ListBoxItem>
-				<Image Source="$image10" Width="300" />
+				<Image Source="$image10" Width="{Binding ElementName=Slider, Path=Value}" />
 			</ListBoxItem>
 			<ListBoxItem>
-				<Image Source="$image11" Width="300" />
+				<Image Source="$image11" Width="{Binding ElementName=Slider, Path=Value}" />
 			</ListBoxItem>
 		</ListBox>
-		<Button Grid.Row="3" Content="Select Image" Name="ButtonSelectImage"
-				HorizontalAlignment="Center" Margin="0,20,0,0"
+		<DockPanel Grid.Row="3">
+			<Label DockPanel.Dock="Left" FontWeight="Bold" Margin="10,10,10,10">Image Size:</Label>
+			<Slider x:Name="Slider"
+				Width="700"
+				Margin="10,20,10,10"
+				Interval="10"
+				Maximum="900"
+				Minimum="150"
+				Value="300"
+				TickPlacement="BottomRight"
+				TickFrequency="50"/>
+			<Button Content="Select Image" Name="ButtonSelectImage"
+				DockPanel.Dock="Right" Margin="10,10,10,10"
 				IsDefault="False"/>
+		</DockPanel>
 	</Grid>
 </Grid>
 
@@ -246,7 +270,7 @@ function OpenWindow($match, $imgnum)
     $Window.Content = $XMLForm
     $Window.Width = 1000
     $Window.Height = 600
-    $Window.Title = "Fix Animated Gifs"
+    $Window.Title = "Fix Animated Gifs - $game"
     $Window.WindowStartupLocation = "CenterScreen"
 
     # Handler for pressing "Select Image" button
@@ -272,6 +296,8 @@ function OpenWindow($match, $imgnum)
 		}
 		
 		$global:description = $global:description.replace($match, $newfile)
+		$global:imgcount += 1
+		$global:gamebool = $true
 		$Window.DialogResult = $true		
 	})
 	

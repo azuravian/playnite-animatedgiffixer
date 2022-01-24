@@ -1,12 +1,12 @@
 Id: Animated_Gif_Fixer_5fs3sd1fs6a8k
 Name: Animated Gif Fixer
 Author: azuravian
-Version: 1.0.0
+Version: 1.1.0
 Module: AnimatedGifFixer.psm1
 Type: Script
 Icon: icon.png
 Links:
     - Name: Github
-      Url: https://github.com/azuravian/playnite-gamemediaprocessor
+      Url: https://github.com/azuravian/playnite-animatedgiffixer
     - Name: Forum
-      Url: https://playnite.link/forum/thread-565.html
+      Url: https://playnite.link/forum/thread-1100.html
