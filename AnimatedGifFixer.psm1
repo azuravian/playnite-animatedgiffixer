@@ -1,15 +1,14 @@
-function GetMainMenuItems
+function GetGameMenuItems
 {
     param(
-        $getMainMenuItemsArgs
+        $MenuArgs
     )
 
-    $menuItem1 = New-Object Playnite.SDK.Plugins.ScriptMainMenuItem
-    $menuItem1.Description = "Fix Animated Gifs"
-	$menuItem1.FunctionName = "FixAnimatedGifs"
-    $menuItem1.MenuSection = "@Game Media Tools"
+    $menuItem = New-Object Playnite.SDK.Plugins.ScriptGameMenuItem
+    $menuItem.Description = "Fix Animated Gifs"
+	$menuItem.FunctionName = "FixAnimatedGifs"
 
-    return $menuItem1
+    return $menuItem
 }
 
 function FixAnimatedGifs
@@ -78,7 +77,7 @@ function FixAnimatedGifs
 	foreach ($game in $GameDatabase){
 		$global:description = $game.Description
 		$global:gamebool = $false
-		$regex = '(https?:\/\/)(.[^"]*?)(gif|png)(.*?)(?=")'
+		$regex = '(https?:\/\/)(.[^"]*?)(gif|png|jpg)(.*?)(?=")'
 		$RegexMatches = ([regex]$regex).Matches($global:description)
 		$imgnum = 0
 		
@@ -86,10 +85,10 @@ function FixAnimatedGifs
 			$gifpath = New-TemporaryDirectory
 			if (!(Test-Path -Path $gifpath))
 			{
-				md -Path $gifpath
+				mkdir -Path $gifpath
 			}
 			
-			if ($match -like "*gif*"){
+			if ($match -like "*gif*" -Or $match -like "*jpg*"){
 				$tempgif = Join-Path $gifpath -ChildPath "temp.gif"
 			}
 			elseif ($match -like "*png*"){
@@ -286,7 +285,7 @@ function OpenWindow($match, $imgnum)
 		
 		if (!(Test-Path -Path $newpath))
 		{
-			md -Path $newpath
+			mkdir -Path $newpath
 		}
 		
 		
@@ -307,4 +306,3 @@ function OpenWindow($match, $imgnum)
     $Window.ShowDialog()
     $__logger.Info("Fix Animated Gifs - Window closed.")
 }
-
