@@ -12,3 +12,18 @@ Packages:
     PackageUrl: https://github.com/azuravian/playnite-animatedgiffixer/releases/download/1.1.0/Animated_Gif_Fixer_5fs3sd1fs6a8k_1_1_0.pext
     Changelog:
       - Added slider and final report
+  - Version: 1.2.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2023-12-30
+    PackageUrl: https://github.com/azuravian/playnite-animatedgiffixer/releases/download/1.2.0/Animated_Gif_Fixer_5fs3sd1fs6a8k_1_2_0.pext
+    Changelog:
+      - Moved to game menu
+      - Fixed issue with gifs on Steam that have a jpg extension
+  - Version: 1.3.0
+    RequiredApiVersion: 6.0.0
+    ReleaseDate: 2024-07-28
+    PackageUrl: https://github.com/azuravian/playnite-animatedgiffixer/releases/download/1.3.0/Animated_Gif_Fixer_5fs3sd1fs6a8k_1_3_0.pext
+    Changelog:
+      - Added visual prompt for each image.
+      - Changed naming of images to random names.  This prevents issues with only converting some images and then running again later and converting others on the same game.
+      - Added function to add tags to games with animated gifs.
