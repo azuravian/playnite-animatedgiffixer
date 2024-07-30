@@ -130,7 +130,7 @@ function FixAnimatedGifs
 				$img = "target-" + $div + ".png"
 				$img = Join-Path $gifpath $img
 				$delnum = $div - 1
-				& "$MagickExecutablePath" convert "$tempgif[0-$div]" -coalesce -delete "0-$delnum" $img
+				& "$MagickExecutablePath" "$tempgif[0-$div]" -coalesce -delete "0-$delnum" $img
 				$images += $img
 				$div += $constdiv
 			}
@@ -227,8 +227,8 @@ function TagAnimatedGifs
 }
 
 function Show-Gif {	
-	$imgheight = & "$MagickExecutablePath" convert "$tempgif[0]" -format '%h' info:
-	$imgwidth = & "$MagickExecutablePath" convert "$tempgif[0]" -format '%w' info:
+	$imgheight = & "$MagickExecutablePath" "$tempgif[0]" -format '%h' info:
+	$imgwidth = & "$MagickExecutablePath" "$tempgif[0]" -format '%w' info:
 	$windowheight = [int]$imgheight + 120
 	$windowwidth = [int]$imgwidth + 20
 	#Create a form
